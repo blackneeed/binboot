@@ -10,11 +10,11 @@
 - To re-compile you will need nasm installed how to install it on debian based distros:    
     - root privileges required  
     ```sudo apt install make```  
-    ``make debian-setup FLAGS=-y``
+    ```make debian-setup```
 - How to install it on arch based distros:  
     - root privileges required     
     ```pacman -S make```  
-    ``make arch-setup``  <br><br>
+    ```make arch-setup```  <br><br>
 - To compile you need to run this command:  
     ```make compile```
 ### And just like that krnlload is compiled!
