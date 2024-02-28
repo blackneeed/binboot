@@ -1,17 +1,20 @@
-; KRNLload v1.0.1d
-; Config
-%define SectorsToRead 4
-%define LoadKernelTo 0x7e00
-%define KernelStartSector 0x02
-
-; Code
 [org 0x7c00]
 [bits 16]
 
-; Define constants
+%define SectorsToRead 4
+%define LoadKernelTo 0x7e00
+%define KernelStartSector 0x02
 %define EndOfLine 0x0A, 0x0D
 
-; Macros
+%macro SetDataSegments 1
+; Set data segments
+mov ds, %1
+mov es, %1
+mov fs, %1
+mov gs, %1
+mov ss, %1
+%endmacro
+
 %macro PushAll 0
 push ax ; Push AX
 push bx ; Push BX
@@ -26,19 +29,14 @@ pop bx ; Pop BX
 pop ax ; Pop AX
 %endmacro
 
-; Start function
+; Entry
 main:
 	; Setup the stack
 	mov bp, 0x7c00
 	mov sp, bp
 
 	; Clear all segment registers
-	xor ax, ax
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
+	SetDataSegments 0
 
 	; Set the BootDisk variable for later
 	mov [BootDisk], dl ; BIOS automatically sets DL to be the boot drive number
