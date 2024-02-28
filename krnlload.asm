@@ -1,4 +1,4 @@
-; KRNLload v1.0.0f
+; KRNLload v1.0.1d
 
 [org 0x7c00]
 
@@ -11,11 +11,20 @@ main:
 	mov sp, bp
 
 	mov [BOOT_DRIVE], dl ; In dl by defualt bios should set the drive number
+	call CLEAR_SCREEN
 	mov bx, NAME_STRING
 	call PUT_STRING
 	call Read 
 
 	jmp LOAD_KERNEL_TO
+
+CLEAR_SCREEN:
+	pusha
+	mov ah, 0x00
+	mov al, 0x03
+	int 0x10
+	popa
+	ret
 
 PUT_STRING:
 	push ax
