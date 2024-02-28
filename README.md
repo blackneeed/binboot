@@ -28,7 +28,7 @@ This outputs a binary that is ready to use
 
 ### It's not working:
 - If KRNLload is not working try these things:
-- Go into the first lines of krnlload.asm and change KERNEL_START_SECTOR to 02h (Like this: `%define KERNEL_START_SECTOR 02h`)  
+- Go into the first lines of krnlload.asm and change KERNEL_START_SECTOR to 0x02 (Like this: `%define KERNEL_START_SECTOR 0x02`)  
 - Go into the first lines of krnlload.asm and change SECTORS_TO_READ to a big number, the number depends on how big you're kernel is we assume that you know about sectors since you are making an operating system (Like this: `%define SECTORS_TO_READ 32`)
 
 ### Versioning scheme:
