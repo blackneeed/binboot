@@ -1,3 +1,5 @@
+; KrnlLoad v1.0.1f
+
 [org 0x7c00]
 [bits 16]
 
@@ -99,7 +101,7 @@ ReadDisk:
 	jmp hcf ; Halt and catch fire
 
 BootDisk: db 0 ; Changed later
-NameString: db "Kernel loader v1.0.0d", EndOfLine, 0 ; The name and version
+NameString: db "Kernel loader v1.0.1f", EndOfLine, 0 ; The name and version
 DiskFailString: db "Could not load kernel!", EndOfLine, 0 ; String when we cannot read the kernel
 
 times 510-($-$$) db 0
