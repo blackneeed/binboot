@@ -32,6 +32,14 @@ main:
 	mov bp, 0x7c00
 	mov sp, bp
 
+	; Clear all segment registers
+	xor ax, ax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+
 	; Set the BootDisk variable for later
 	mov [BootDisk], dl ; BIOS automatically sets DL to be the boot drive number
 	call ClearScreen ; Clear the screen
