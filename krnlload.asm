@@ -2,23 +2,31 @@
 
 [org 0x7c00]
 
-%define EOL 0x0A, 0x0D
-
-%include "config.asm"
+%define EndOfLine 0x0A, 0x0D
+%define SectorsToRead 4
+%define LoadKernelTo 0x7e00
+%define KernelStartSector 0x02
 
 main:
 	mov bp, 0x7c00
 	mov sp, bp
 
-	mov [BOOT_DRIVE], dl ; In dl by defualt bios should set the drive number
-	call CLEAR_SCREEN
-	mov bx, NAME_STRING
-	call PUT_STRING
-	call Read 
+	mov [BootDisk], dl ; In dl by defualt bios should set the drive number
+	call ClearScreen
+	mov bx, NameString
+	call PutS
+	call ReadDisk
 
-	jmp LOAD_KERNEL_TO
+	jmp LoadKernelTo
 
-CLEAR_SCREEN:
+hcf:
+	cli
+	.halt:
+	hlt
+	jmp .halt
+
+
+ClearScreen:
 	pusha
 	mov ah, 0x00
 	mov al, 0x03
@@ -26,7 +34,7 @@ CLEAR_SCREEN:
 	popa
 	ret
 
-PUT_STRING:
+PutS:
 	push ax
 	push bx
 	.Loop:
@@ -42,29 +50,26 @@ PUT_STRING:
 	pop bx
 	ret
 
-Read:
+ReadDisk:
 	mov ah, 0x02
-	mov al, SECTORS_TO_READ
+	mov al, SectorsToRead
 	mov ch, 0x00
 	mov dh, 0x00
-	mov cl, KERNEL_START_SECTOR
-	mov dl, [BOOT_DRIVE]
-	mov bx, LOAD_KERNEL_TO
+	mov cl, KernelStartSector
+	mov dl, [BootDisk]
+	mov bx, LoadKernelTo
 	int 0x13
-	jc Fail
+	jc .ReadDiskFail
 	ret
 
-Fail:
-	mov bx, FAIL_STRING
-	call PUT_STRING
-	cli
-	.loop:
-		hlt
-		jmp .loop ; Sometimes something can happen so its best to be sure that it halts
+.ReadDiskFail:
+	mov bx, DiskFailString
+	call PutS
+	jmp hcf
 
-BOOT_DRIVE: db 0
-NAME_STRING: db "KRNLLOAD", 0x0A, 0x0D, 0
-FAIL_STRING: db "Could not load kernel!", EOL, 0
+BootDisk: db 0
+NameString: db "Kernel loader v1.0.0d", EndOfLine, 0
+DiskFailString: db "Could not load kernel!", EndOfLine, 0
 
 times 510-($-$$) db 0
 dw 0xaa55
