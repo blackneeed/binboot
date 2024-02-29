@@ -10,11 +10,12 @@
 
 %macro SetDataSegments 1
 ; Set data segments
-mov ds, %1
-mov es, %1
-mov fs, %1
-mov gs, %1
-mov ss, %1
+mov ax, %1
+mov ds, ax
+mov es, ax
+mov fs, ax
+mov gs, ax
+mov ss, ax
 %endmacro
 
 %macro PushAll 0
