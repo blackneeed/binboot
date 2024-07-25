@@ -1,9 +1,3 @@
-arch-setup:
-	pacman -Sy nasm --noconfirm
-
-debian-setup:
-	apt update
-	apt install nasm -y
-
+.PHONY: compile
 compile:
-	nasm -f bin krnlload.asm -o krnlload.bin
+	nasm -f bin krnlload.asm
