@@ -1,105 +1,91 @@
-; KrnlLoad v1.0.1f
+; binboot v1.0.2d
 
 [org 0x7c00]
 [bits 16]
 
-%define SectorsToRead 4
-%define LoadKernelToSeg 0
-%define LoadKernelToOff 0x7e00
-%define KernelStartSector 0x02
-%define EndOfLine 0x0A, 0x0D
+%define sectors_to_read 4
+%define load_kernel_to_seg 0
+%define load_kernel_to_off 0x7e00
+%define kernel_start_sector 0x02
 
-%macro SetDataSegments 1
-; Set data segments
-mov ax, %1
-mov ds, ax
-mov es, ax
-mov fs, ax
-mov gs, ax
-mov ss, ax
-%endmacro
-
-; Entry
 main:
 	jmp 0:.after_cs
 .after_cs:
-	; Setup the stack
 	mov bp, 0x7c00
 	mov sp, bp
 
-	; Clear all segment registers
-	SetDataSegments 0
+	mov ax, 0
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
 
-	; Set the BootDisk variable for later
-	mov [BootDisk], dl ; BIOS automatically sets DL to be the boot drive number
-	call ClearScreen ; Clear the screen
-	mov bx, NameString ; Move the NameString label into BX
-	call PutS ; Print BX
-	call ReadDisk ; Read the disk
+	mov [boot_disk], dl
+	call clear_screen
+	mov bx, name_string
+	call print_string
+	call read_disk
 
-	jmp LoadKernelToSeg:LoadKernelToOff ; Pass control to the kernel
+	jmp load_kernel_to_seg:load_kernel_to_off
 
-; Halt and catch fire
 hcf:
-	cli ; Clear interrupts
-	.halt: ; Halt in a infinite loop
-	hlt ; Halt
-	jmp .halt ; Jump back to the start of the loop
+	cli
+	.halt:
+	hlt
+	jmp .halt
 
-; Clear Screen Function
-ClearScreen:
-	pusha ; Push all registers
-	mov ah, 0x00 ; Change the bios interrupt to 0x00
-	mov al, 0x03 ; Set the video mode to 0x03
-	int 0x10 ; Call video interrupt
-	popa ; Pop all registers
-	ret ; Return
+clear_screen:
+	pusha
+	mov ah, 0x00
+	mov al, 0x03
+	int 0x10
+	popa
+	ret
 
-; Print string function
-PutS:
-	push ax ; Push AX
-	push bx ; Push BX
+print_string:
+	push ax
+	push bx
 	.Loop:
-	mov al, [bx] ; Move the byte from BX to AL
-	test al, al ; Compare al
-	jz .Ret ; Jump if zero into return
-	mov ah, 0x0e ; Set the bios interrupt to 0x0e
-	int 0x10 ; Call video interurpt
-	inc bx ; Increment the BX data pointer
-	jmp .Loop ; Jump back into the start of the loop
-	.Ret: ; Define return
-	pop bx ; Pop BX
-	pop ax ; Pop AX
-	ret ; Return
+	mov al, [bx]
+	test al, al
+	jz .Ret
+	mov ah, 0x0e
+	int 0x10
+	inc bx
+	jmp .Loop
+	.Ret:
+	pop bx
+	pop ax
+	ret
 
-; Read disk function
-ReadDisk:
+read_disk:
 	cli
 	push dx
-	mov ah, 0x02 ; Set bios interrupt to 0x02
-	mov al, SectorsToRead ; Set sector count to the config variable SectorsToRead
-	mov ch, 0x00 ; Set the cylinder to 0
-	mov dh, 0x00 ; Set the head to 0
-	mov cl, KernelStartSector ; Set the sector to the config variable KernelStartSector
-	mov dl, [BootDisk] ; Move the boot disk into DL
+	mov ah, 0x02
+	mov al, sectors_to_read
+	mov ch, 0x00
+	mov dh, 0x00
+	mov cl, kernel_start_sector
+	mov dl, [boot_disk]
 	push ax
-	mov ax, LoadKernelToSeg
+	mov ax, load_kernel_to_seg
 	mov es, ax
 	pop ax
-	mov bx, LoadKernelToOff ; Tell BIOS to load the kernel into the config variable LoadKernelTo
-	int 0x13 ; Call disk services interrupt
+	mov bx, load_kernel_to_off
+	int 0x13
 	pop dx
-	jc .ReadDiskFail ; If failed jump to read disk fail
-	ret ; Return
+	jc .read_disk_fail
+	ret
 
-.ReadDiskFail: ; Define read disk fail
-	mov bx, DiskFailString ; Move the DiskFailString into BX
-	call PutS ; Print
-	jmp hcf ; Halt and catch fire
+.read_disk_fail:
+	mov bx, disk_fail_string
+	call print_string
+	jmp hcf
 
-BootDisk: db 0 ; Changed later
-NameString: db "binboot v1.0.2d", EndOfLine, 0 ; The name and version
-DiskFailString: db "Could not load kernel!", EndOfLine, 0 ; String when we cannot read the kernel
+boot_disk: db 0
+name_string: db "binboot v1.0.2d", 0xD, 0xA, 0
+disk_fail_string: db "Could not load kernel!", 0xD, 0xA, 0
 
 times 510-($-$$) db 0
 dw 0xaa55
