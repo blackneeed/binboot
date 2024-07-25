@@ -9,4 +9,4 @@ make
 
 ## Use
 First, compile whatever you want to load to a binary.
-`$ cat krnlload bin > out`
+`$ cat binboot bin > out`
