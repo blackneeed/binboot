@@ -1,4 +1,4 @@
-; binboot v1.0.2d
+; binboot v1.0.2f
 
 [org 0x7c00]
 [bits 16]
@@ -84,7 +84,7 @@ read_disk:
 	jmp hcf
 
 boot_disk: db 0
-name_string: db "binboot v1.0.2d", 0xD, 0xA, 0
+name_string: db "binboot v1.0.2f", 0xD, 0xA, 0
 disk_fail_string: db "Could not load kernel!", 0xD, 0xA, 0
 
 times 510-($-$$) db 0
