@@ -8,5 +8,5 @@ make
 `$ make`
 
 ## Use
-First, compile whatever you want to load to a binary.
+First, compile whatever you want to load to a binary.  
 `$ cat binboot bin > out`
