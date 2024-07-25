@@ -1,12 +1,12 @@
-# (K)e(R)(N)e(L) (L)(O)(A)(D)er v1.0.1f
+# binboot
 
 ## Dependencies
-nasm
+nasm  
 make
 
 ## Compilation
 `$ make`
 
 ## Use
-First, compile the kernel/whatever you want to load to a binary.
-`$ cat krnlload kernel > out`
+First, compile whatever you want to load to a binary.
+`$ cat krnlload bin > out`

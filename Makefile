@@ -1,3 +1,3 @@
 .PHONY: compile
 compile:
-	nasm -f bin krnlload.asm
+	nasm -f bin binboot.asm
