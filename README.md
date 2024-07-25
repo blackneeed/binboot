@@ -8,4 +8,5 @@ nasm
 
 ## Use
 First, compile whatever you want to load to a binary.  
-`$ cat binboot bin > out`
+Linux: `$ cat binboot bin > out`
+Windows: `$ copy /b binboot+bin out`
